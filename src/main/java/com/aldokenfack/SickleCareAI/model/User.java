@@ -21,9 +21,8 @@ public class User {
 
     private Role role;
 
-    private Boolean activated;
+    private Boolean activated = false;
 
-    private Boolean validated;
-
+    private Boolean validated = false;
 
 }
