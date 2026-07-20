@@ -26,8 +26,22 @@ public class PatientService {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     public PatientResponseDTO registerPatient(PatientRegistrationDTO dto){
 
+        // Existing user verification with username and email
+
+        if (patientRepository.existsByUsername(dto.getUsername())){
+            System.out.println("Error : " + dto.getUsername() + " already exist !");
+            throw new RuntimeException("Username already exist !");
+        }
+
+        if (patientRepository.existsByEmail(dto.getEmail())){
+            System.out.println("Error : " + dto.getEmail() + " already exist !");
+            throw new RuntimeException("Email already exist !");
+        }
+
+        // Patient creation after verification
         Patient patient = new Patient();
 
         patient.setUsername(dto.getUsername());
