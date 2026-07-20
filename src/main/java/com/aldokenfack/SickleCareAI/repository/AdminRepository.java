@@ -1,11 +1,11 @@
 package com.aldokenfack.SickleCareAI.repository;
 
-import com.aldokenfack.SickleCareAI.model.Patient;
+import com.aldokenfack.SickleCareAI.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, Long> {
+public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Boolean existsByUsername(String username);
 
