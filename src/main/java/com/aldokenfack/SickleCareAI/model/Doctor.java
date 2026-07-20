@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
-public class Doctor {
+public class Doctor extends User{
 
     private String firstname;
 

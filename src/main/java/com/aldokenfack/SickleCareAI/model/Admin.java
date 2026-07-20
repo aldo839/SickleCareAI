@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "administrator")
 @Getter @Setter
-public class Admin {
+public class Admin extends User{
 
     private String firstname;
     private String lastname;
