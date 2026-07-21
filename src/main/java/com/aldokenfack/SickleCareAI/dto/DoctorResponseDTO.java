@@ -1,0 +1,28 @@
+package com.aldokenfack.SickleCareAI.dto;
+
+public record DoctorResponseDTO(
+
+        String username,
+
+        String email,
+
+        String firstname,
+
+        String lastname,
+
+        String speciality,
+
+        String matricule,
+
+        String validationLetterReference,
+
+        String hospitalUnit,
+
+        String region,
+
+        String city,
+
+        String hospital
+
+) {
+}
