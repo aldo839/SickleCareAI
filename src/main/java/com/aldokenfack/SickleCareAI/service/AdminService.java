@@ -47,7 +47,7 @@ public class AdminService {
         admin.setUsername(dto.getUsername());
         admin.setEmail(dto.getEmail());
         admin.setPassword(passwordEncoder.encode(dto.getPassword()));
-        admin.setRole(Role.ADMIN);
+        admin.setRole(Role.ROLE_ADMIN);
         admin.setFirstname(dto.getFirstname());
         admin.setLastname(dto.getLastname());
 

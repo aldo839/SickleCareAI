@@ -6,6 +6,7 @@ import com.aldokenfack.SickleCareAI.dto.DoctorUpdateDTO;
 import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Doctor;
+import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class DoctorService {
         doctor.setPassword(passwordEncoder.encode(dto.getPassword()));
         doctor.setFirstname(dto.getFirstname());
         doctor.setLastname(dto.getLastname());
+        doctor.setRole(Role.ROLE_DOCTOR);
         doctor.setSpeciality(dto.getSpeciality());
         doctor.setMatricule(dto.getMatricule());
         doctor.setValidationLetterReference(dto.getValidationLetterReference());

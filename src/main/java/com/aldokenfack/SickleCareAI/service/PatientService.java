@@ -48,7 +48,7 @@ public class PatientService {
 
         patient.setUsername(dto.getUsername());
         patient.setEmail(dto.getEmail());
-        patient.setRole(Role.PATIENT);
+        patient.setRole(Role.ROLE_PATIENT);
         patient.setPassword(passwordEncoder.encode(dto.getPassword()));
         patient.setSex(dto.getSex());
         patient.setFirstname(dto.getFirstname());
