@@ -3,6 +3,8 @@ package com.aldokenfack.SickleCareAI.service;
 import com.aldokenfack.SickleCareAI.dto.AdminRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminUpdateDTO;
+import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
+import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Admin;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.AdminRepository;
@@ -31,12 +33,12 @@ public class AdminService {
         // Existing account verification
         if (adminRepository.existsByUsername(dto.getUsername())){
             System.err.println("Error : " + dto.getUsername() + " already exist !");
-            throw new RuntimeException("This username already exist !");
+            throw new UserAlreadyExistException("This username already exist !");
         }
 
         if (adminRepository.existsByEmail(dto.getEmail())){
             System.out.println("Error : " + dto.getEmail() + " already exist !");
-            throw new RuntimeException("This username already exist !");
+            throw new UserAlreadyExistException("This username already exist !");
         }
 
         // Account creation after verification
@@ -67,7 +69,7 @@ public class AdminService {
 
         return adminRepository.findById(id)
                 .map(adminMapperService::mapToResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Admin mot found !"));
+                .orElseThrow(() -> new UserNotFoundException("Admin mot found !"));
     }
 
 
@@ -87,7 +89,7 @@ public class AdminService {
 
             updatedAdmin = adminRepository.save(admin);
         } else {
-            throw new RuntimeException("Admin not found !");
+            throw new UserNotFoundException("Admin not found !");
         }
 
         return adminMapperService.mapToResponseDTO(updatedAdmin);
@@ -101,7 +103,7 @@ public class AdminService {
         if (adminToDelete.isPresent()){
             adminRepository.deleteById(id);
         }
-        throw new RuntimeException("Admin not found !");
+        throw new UserNotFoundException("Admin not found !");
     }
 
 }

@@ -3,6 +3,8 @@ package com.aldokenfack.SickleCareAI.service;
 import com.aldokenfack.SickleCareAI.dto.DoctorRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorUpdateDTO;
+import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
+import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Doctor;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,12 +32,12 @@ public class DoctorService {
         // Existing user verification
         if (doctorRepository.existsByUsername(dto.getUsername())){
             System.err.println("Error : " + dto.getUsername() + " already exist !");
-            throw new RuntimeException("This username already exist !");
+            throw new UserAlreadyExistException("This username already exist !");
         }
 
         if (doctorRepository.existsByEmail(dto.getEmail())){
             System.err.println("Error : " + dto.getEmail() + " already exist !");
-            throw new RuntimeException("This email already exist !");
+            throw new UserAlreadyExistException("This email already exist !");
         }
 
         // Patient creation after verification
@@ -73,7 +75,7 @@ public class DoctorService {
 
         return doctorRepository.findById(id)
                 .map(doctorMapperService::mapToResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Doctor not found !"));
+                .orElseThrow(() -> new UserNotFoundException("Doctor not found !"));
     }
 
 
@@ -98,7 +100,7 @@ public class DoctorService {
             updatedDoctor = doctorRepository.save(doctor);
 
         } else {
-            throw new RuntimeException("Doctor not found !");
+            throw new UserNotFoundException("Doctor not found !");
         }
 
         return doctorMapperService.mapToResponseDTO(updatedDoctor);
@@ -112,7 +114,7 @@ public class DoctorService {
         if (doctorToDelete.isPresent()){
             doctorRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Doctor not found !");
+            throw new UserNotFoundException("Doctor not found !");
         }
     }
 

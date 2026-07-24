@@ -4,6 +4,8 @@ import com.aldokenfack.SickleCareAI.config.SecurityConfig;
 import com.aldokenfack.SickleCareAI.dto.PatientRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientUpdateDTO;
+import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
+import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Patient;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
@@ -33,12 +35,12 @@ public class PatientService {
 
         if (patientRepository.existsByUsername(dto.getUsername())){
             System.out.println("Error : " + dto.getUsername() + " already exist !");
-            throw new RuntimeException("Username already exist !");
+            throw new UserAlreadyExistException("Username already exist !");
         }
 
         if (patientRepository.existsByEmail(dto.getEmail())){
             System.out.println("Error : " + dto.getEmail() + " already exist !");
-            throw new RuntimeException("Email already exist !");
+            throw new UserAlreadyExistException("Email already exist !");
         }
 
         // Patient creation after verification
@@ -78,7 +80,7 @@ public class PatientService {
 
         return patientRepository.findById(id)
                 .map(patientMapperService::mapToResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Patient not found !"));
+                .orElseThrow(() -> new UserNotFoundException("Patient not found !"));
     }
 
 
@@ -102,7 +104,7 @@ public class PatientService {
             updatedPatient = patientRepository.save(patient);
 
         } else {
-            throw new RuntimeException("Patient not found !");
+            throw new UserNotFoundException("Patient not found !");
         }
 
         return patientMapperService.mapToResponseDTO(updatedPatient);
@@ -116,7 +118,7 @@ public class PatientService {
         if (patientToDelete.isPresent()){
             patientRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Patient Not found !");
+            throw new UserNotFoundException("Patient Not found !");
         }
     }
 
