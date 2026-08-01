@@ -13,8 +13,8 @@ public class PatientMapperService {
     public PatientResponseDTO mapToResponseDTO(Patient patient){
 
         int age = 0;
-        if (patient.getBirthDate() != null){
-            age = Period.between(patient.getBirthDate(), LocalDate.now()).getYears();
+        if (patient.getBirthdate() != null){
+            age = Period.between(patient.getBirthdate(), LocalDate.now()).getYears();
         }
 
         return new PatientResponseDTO(
@@ -23,16 +23,17 @@ public class PatientMapperService {
                 patient.getUsername(),
                 patient.getEmail(),
                 patient.getRole(),
-                patient.getFirstname() + patient.getLastname(),
+                patient.getFirstname() + " " + patient.getLastname(),
                 patient.getSex(),
                 age,
-                patient.getBloodType(),
                 patient.getGenotype(),
+                patient.getBloodtype(),
                 patient.getWeight(),
                 patient.getRegion(),
                 patient.getCity()
 
         );
+
     }
 
 }
