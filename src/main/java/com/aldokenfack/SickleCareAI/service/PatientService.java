@@ -9,8 +9,10 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Patient;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class PatientService {
     }
 
 
-    public PatientResponseDTO registerPatient(PatientRegistrationDTO dto){
+    public PatientResponseDTO registerPatient(@Valid @RequestBody PatientRegistrationDTO dto){
 
         // Existing user verification with username and email
 
@@ -54,9 +56,9 @@ public class PatientService {
         patient.setFirstname(dto.getFirstname());
         patient.setLastname(dto.getLastname());
         patient.setSex(dto.getSex());
-        patient.setBirthDate(dto.getBirthDate());
-        patient.setBloodType(dto.getBloodType());
+        patient.setBirthdate(dto.getBirthdate());
         patient.setGenotype(dto.getGenotype());
+        patient.setBloodtype(dto.getBloodtype());
         patient.setWeight(dto.getWeight());
         patient.setRegion(dto.getRegion());
         patient.setCity(dto.getCity());
