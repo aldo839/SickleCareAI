@@ -16,13 +16,13 @@ public record DoctorResponseDTO(
 
         String validationLetterReference,
 
-        String hospitalUnit,
-
         String region,
 
         String city,
 
-        String hospital
+        String hospital,
+
+        String hospitalUnit
 
 ) {
 }
