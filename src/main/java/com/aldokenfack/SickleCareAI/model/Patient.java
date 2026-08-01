@@ -2,6 +2,8 @@ package com.aldokenfack.SickleCareAI.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,14 +17,17 @@ public class Patient extends User{
 
     private String lastname;
 
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private LocalDate birthDate;
+    private LocalDate birthdate;
+
+    @Enumerated(EnumType.STRING)
+    private Genotype genotype;
+
     @Column(name = "blood_type")
-
-    private String bloodType;
-
-    private String genotype;
+    @Enumerated(EnumType.STRING)
+    private Bloodtype bloodtype;
 
     private Double weight;
 
