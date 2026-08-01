@@ -42,10 +42,6 @@ public class DoctorRegistrationDTO {
     @Pattern(regexp = "^[a-zA-Z\\s]", message = "validation letter reference can only contain letters and space")
     private String validationLetterReference;
 
-    @Size(max = 50, message = "Hospital Unit must be less than 50 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Hospital unit must only contain letter, number and space")
-    private String hospitalUnit;
-
     @Size(max = 20, message = "Region must be less than 20 characters")
     @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Region must only contain letter, number and space")
     private String region;
@@ -57,5 +53,9 @@ public class DoctorRegistrationDTO {
     @Size(max = 50, message = "Hospital must be less than 50 characters")
     @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Hospital must only contain letter, number and space")
     private String hospital;
+
+    @Size(max = 50, message = "Hospital Unit must be less than 50 characters")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Hospital unit must only contain letter, number and space")
+    private String hospitalUnit;
 
 }

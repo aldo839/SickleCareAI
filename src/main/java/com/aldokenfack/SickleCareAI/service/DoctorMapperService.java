@@ -18,10 +18,10 @@ public class DoctorMapperService {
                 doctor.getSpeciality(),
                 doctor.getMatricule(),
                 doctor.getValidationLetterReference(),
-                doctor.getHospitalUnit(),
                 doctor.getRegion(),
                 doctor.getCity(),
-                doctor.getHospital()
+                doctor.getHospital(),
+                doctor.getHospitalUnit()
         );
 
     }

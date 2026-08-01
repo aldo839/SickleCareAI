@@ -18,12 +18,12 @@ public class Doctor extends User{
 
     private String validationLetterReference;
 
-    private String hospitalUnit;
-
     private String region;
 
     private String city;
 
     private String hospital;
+
+    private String hospitalUnit;
 
 }
