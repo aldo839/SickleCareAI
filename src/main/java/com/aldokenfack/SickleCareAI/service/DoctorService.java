@@ -53,10 +53,10 @@ public class DoctorService {
         doctor.setSpeciality(dto.getSpeciality());
         doctor.setMatricule(dto.getMatricule());
         doctor.setValidationLetterReference(dto.getValidationLetterReference());
-        doctor.setHospitalUnit(dto.getHospitalUnit());
         doctor.setRegion(dto.getRegion());
         doctor.setCity(dto.getCity());
         doctor.setHospital(dto.getHospital());
+        doctor.setHospitalUnit(dto.getHospitalUnit());
 
         Doctor savedDoctor = doctorRepository.save(doctor);
 
