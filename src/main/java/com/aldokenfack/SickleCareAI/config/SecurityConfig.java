@@ -26,10 +26,8 @@ public class SecurityConfig {
 
         return http
                         .csrf(AbstractHttpConfigurer::disable)
-                        .authorizeHttpRequests(auth ->
-                                auth.requestMatchers(HttpMethod.POST, "/patients", "/doctors", "/user/login").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/admin").hasRole("ROOT")
-                                        .anyRequest().authenticated()
+                        .authorizeHttpRequests(auth -> auth
+                                .anyRequest().permitAll()
                         ).build();
     }
 
