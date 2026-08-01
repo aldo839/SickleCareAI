@@ -1,5 +1,7 @@
 package com.aldokenfack.SickleCareAI.dto;
 
+import com.aldokenfack.SickleCareAI.model.Bloodtype;
+import com.aldokenfack.SickleCareAI.model.Genotype;
 import com.aldokenfack.SickleCareAI.model.Sex;
 import com.aldokenfack.SickleCareAI.validator.ValidPassword;
 import jakarta.validation.constraints.*;
@@ -37,13 +39,13 @@ public class PatientRegistrationDTO {
     private Sex sex;
 
     @Past(message = "You birth date must be pass")
-    private LocalDate birthDate;
-
-    @Pattern(regexp = "^(A|B|AB|O)[+-]$", message = "Invalid Blood Type, choose one between A+, A-, B+, B-, AB+, AB-, O+, O-")
-    private String bloodType;
+    private LocalDate birthdate;
 
     @Pattern(regexp = "^(AA|AS|SS|AC|SC|CC)$", message = "Invalid Blood Type, choose one between AA, AS, SS, AC, SC, CC")
-    private String genotype;
+    private Genotype genotype;
+
+    @Pattern(regexp = "^(A|B|AB|O)$", message = "Invalid Blood Type, choose one between A+, A-, B+, B-, AB+, AB-, O+, O-")
+    private Bloodtype bloodtype;
 
     @Positive(message = "Weight must be positive !")
     @Max(value = 300, message = "Weight must be less that 300 (Kg)")
