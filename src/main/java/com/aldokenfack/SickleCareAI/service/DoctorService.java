@@ -8,8 +8,11 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Doctor;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +31,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO registerDoctor(DoctorRegistrationDTO dto){
+    public DoctorResponseDTO registerDoctor(@Valid @RequestBody DoctorRegistrationDTO dto){
 
         // Existing user verification
         if (doctorRepository.existsByUsername(dto.getUsername())){
@@ -73,7 +76,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO getDoctorById(Long id){
+    public DoctorResponseDTO getDoctorById(@PathVariable Long id){
 
         return doctorRepository.findById(id)
                 .map(doctorMapperService::mapToResponseDTO)
@@ -81,7 +84,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO updateDoctor(Long id, DoctorUpdateDTO dto){
+    public DoctorResponseDTO updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorUpdateDTO dto){
 
         Doctor updatedDoctor = null;
 
@@ -109,7 +112,7 @@ public class DoctorService {
     }
 
 
-    public void deleteDoctor(Long id){
+    public void deleteDoctor(@PathVariable Long id){
 
         Optional<Doctor> doctorToDelete = doctorRepository.findById(id);
 
