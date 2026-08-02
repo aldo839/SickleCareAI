@@ -4,6 +4,8 @@ public record AdminResponseDTO(
 
         String username,
 
+        String email,
+
         String firstname,
 
         String lastname
