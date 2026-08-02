@@ -15,6 +15,7 @@ public class AdminMapperService {
         return new AdminResponseDTO(
 
                 admin.getUsername(),
+                admin.getEmail(),
                 admin.getFirstname(),
                 admin.getLastname()
 
