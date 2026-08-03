@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
+
 @ControllerAdvice
 public class CustomExceptionHandler {
 
@@ -13,9 +15,9 @@ public class CustomExceptionHandler {
 
         ApiError apiError = new ApiError();
 
-        apiError.setMessage(apiError.getMessage());
-        apiError.setError(apiError.getError());
-        apiError.setTimestamp(apiError.getTimestamp());
+        apiError.setMessage(e.getMessage());
+        apiError.setError(HttpStatus.NOT_FOUND.value());
+        apiError.setTimestamp(LocalDateTime.now());
 
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
@@ -25,11 +27,11 @@ public class CustomExceptionHandler {
 
         ApiError apiError = new ApiError();
 
-        apiError.setMessage(apiError.getMessage());
-        apiError.setError(apiError.getError());
-        apiError.setTimestamp(apiError.getTimestamp());
+        apiError.setMessage(e.getMessage());
+        apiError.setError(HttpStatus.CONFLICT.value());
+        apiError.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(apiError, HttpStatus.OK);
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
 }
