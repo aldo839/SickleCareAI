@@ -27,7 +27,10 @@ public class SecurityConfig {
         return http
                         .csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(auth -> auth
-                                .anyRequest().permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/patients", "/api/doctors/", "/api/users/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/admin").hasRole("ROOT")
+                                .requestMatchers(HttpMethod.DELETE, "/api/patients", "/api/doctors/", "/api/admin").hasRole("ROOT")
+                                .anyRequest().authenticated()
                         ).build();
     }
 
