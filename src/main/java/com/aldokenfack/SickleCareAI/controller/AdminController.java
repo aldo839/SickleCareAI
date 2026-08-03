@@ -4,6 +4,7 @@ import com.aldokenfack.SickleCareAI.dto.AdminRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminUpdateDTO;
 import com.aldokenfack.SickleCareAI.service.AdminService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +37,14 @@ public class AdminController {
 
 
     @PostMapping
-    public ResponseEntity<AdminResponseDTO> registerAdmin(@RequestBody AdminRegistrationDTO dto){
+    public ResponseEntity<AdminResponseDTO> registerAdmin(@Valid @RequestBody AdminRegistrationDTO dto){
 
         return new ResponseEntity<>(adminService.registerAdmin(dto), HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminResponseDTO> updateAdmin(@PathVariable Long id, @RequestBody AdminUpdateDTO dto){
+    public ResponseEntity<AdminResponseDTO> updateAdmin(@Valid @PathVariable Long id, @RequestBody AdminUpdateDTO dto){
 
         return new ResponseEntity<>(adminService.updateAdmin(id, dto), HttpStatus.OK);
     }

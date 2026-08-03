@@ -4,6 +4,7 @@ import com.aldokenfack.SickleCareAI.dto.DoctorRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorUpdateDTO;
 import com.aldokenfack.SickleCareAI.service.DoctorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +37,14 @@ public class DoctorController {
 
 
     @PostMapping
-    public ResponseEntity<DoctorResponseDTO> registerDoctor(@RequestBody DoctorRegistrationDTO dto){
+    public ResponseEntity<DoctorResponseDTO> registerDoctor(@Valid @RequestBody DoctorRegistrationDTO dto){
 
         return new ResponseEntity<>(doctorService.registerDoctor(dto), HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorResponseDTO> updateDoctor(@PathVariable Long id, @RequestBody DoctorUpdateDTO dto){
+    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @PathVariable Long id, @RequestBody DoctorUpdateDTO dto){
 
         return new ResponseEntity<>(doctorService.updateDoctor(id, dto), HttpStatus.OK);
     }
