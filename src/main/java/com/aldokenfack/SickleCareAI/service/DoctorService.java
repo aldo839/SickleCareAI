@@ -11,8 +11,6 @@ import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +29,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO registerDoctor(@Valid @RequestBody DoctorRegistrationDTO dto){
+    public DoctorResponseDTO registerDoctor(DoctorRegistrationDTO dto){
 
         // Existing user verification
         if (doctorRepository.existsByUsername(dto.getUsername())){
@@ -76,7 +74,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO getDoctorById(@PathVariable Long id){
+    public DoctorResponseDTO getDoctorById(Long id){
 
         return doctorRepository.findById(id)
                 .map(doctorMapperService::mapToResponseDTO)
@@ -84,7 +82,7 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorUpdateDTO dto){
+    public DoctorResponseDTO updateDoctor(Long id, DoctorUpdateDTO dto){
 
         Doctor updatedDoctor = null;
 
@@ -112,7 +110,7 @@ public class DoctorService {
     }
 
 
-    public void deleteDoctor(@PathVariable Long id){
+    public void deleteDoctor(Long id){
 
         Optional<Doctor> doctorToDelete = doctorRepository.findById(id);
 
