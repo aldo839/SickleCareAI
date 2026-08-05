@@ -9,25 +9,21 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Patient;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final PatientMapperService patientMapperService;
     private final PasswordEncoder passwordEncoder;
-
-    public PatientService(PatientRepository patientRepository, PatientMapperService patientMapperService, SecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
-        this.patientRepository = patientRepository;
-        this.patientMapperService = patientMapperService;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final ValidationService validationService;
 
 
     public PatientResponseDTO registerPatient(PatientRegistrationDTO dto){
@@ -63,6 +59,8 @@ public class PatientService {
         patient.setCity(dto.getCity());
 
         Patient savedPatient = patientRepository.save(patient);
+
+        validationService.registerUser(savedPatient);
 
         return patientMapperService.mapToResponseDTO(savedPatient);
     }

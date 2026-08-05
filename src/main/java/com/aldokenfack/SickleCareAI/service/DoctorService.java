@@ -9,6 +9,7 @@ import com.aldokenfack.SickleCareAI.model.Doctor;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final DoctorMapperService doctorMapperService;
     private final PasswordEncoder passwordEncoder;
-
-    public DoctorService(DoctorRepository doctorRepository, DoctorMapperService doctorMapperService, PasswordEncoder passwordEncoder) {
-        this.doctorRepository = doctorRepository;
-        this.doctorMapperService = doctorMapperService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    private final ValidationService validationService;
 
     public DoctorResponseDTO registerDoctor(DoctorRegistrationDTO dto){
 
@@ -60,6 +56,8 @@ public class DoctorService {
         doctor.setHospitalUnit(dto.getHospitalUnit());
 
         Doctor savedDoctor = doctorRepository.save(doctor);
+
+        validationService.registerUser(savedDoctor);
 
         return doctorMapperService.mapToResponseDTO(savedDoctor);
 

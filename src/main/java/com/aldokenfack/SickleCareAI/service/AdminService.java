@@ -8,6 +8,7 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Admin;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.AdminRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +16,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
     private final AdminRepository adminRepository;
     private final AdminMapperService adminMapperService;
     private final PasswordEncoder passwordEncoder;
-
-    public AdminService(AdminRepository adminRepository, AdminMapperService adminMapperService, PasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
-        this.adminMapperService = adminMapperService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    private final ValidationService validationService;
 
     public AdminResponseDTO registerAdmin(AdminRegistrationDTO dto){
 
@@ -52,6 +48,8 @@ public class AdminService {
         admin.setLastname(dto.getLastname());
 
         Admin savedAdmin = adminRepository.save(admin);
+
+        validationService.registerUser(savedAdmin);
 
         return adminMapperService.mapToResponseDTO(savedAdmin);
     }
