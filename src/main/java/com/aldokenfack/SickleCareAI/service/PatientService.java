@@ -1,6 +1,5 @@
 package com.aldokenfack.SickleCareAI.service;
 
-import com.aldokenfack.SickleCareAI.config.SecurityConfig;
 import com.aldokenfack.SickleCareAI.dto.PatientRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientUpdateDTO;
@@ -8,12 +7,15 @@ import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Patient;
 import com.aldokenfack.SickleCareAI.model.Role;
+import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -119,6 +121,24 @@ public class PatientService {
         } else {
             throw new UserNotFoundException("Patient Not found !");
         }
+    }
+
+
+    public String activation(Map<String, String> activation){
+
+        Validation validation = validationService.readCode(activation.get("code"));
+
+        if (Instant.now().isAfter(validation.getExpiration())){
+            throw new RuntimeException("Your code is expire");
+        }
+
+        Patient patient = patientRepository.findById(validation.getUser().getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        patient.setActivated(true);
+
+        patientRepository.save(patient);
+
+        return patient.getActivated().toString();
     }
 
 }
