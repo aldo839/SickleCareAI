@@ -7,13 +7,16 @@ import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Doctor;
 import com.aldokenfack.SickleCareAI.model.Role;
+import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -61,6 +64,23 @@ public class DoctorService {
 
         return doctorMapperService.mapToResponseDTO(savedDoctor);
 
+    }
+
+
+    public String activation(Map<String, String> ativation){
+
+        Validation validation = validationService.readCode(ativation.get("code"));
+
+        if (Instant.now().isAfter(validation.getExpiration())){
+            throw new RuntimeException("Your code is expire");
+        }
+
+        Doctor doctor = doctorRepository.findById(validation.getUser().getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        doctor.setActivated(true);
+        doctorRepository.save(doctor);
+
+        return  doctor.getActivated().toString();
     }
 
 
