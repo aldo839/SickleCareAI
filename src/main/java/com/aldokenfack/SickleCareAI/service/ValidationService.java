@@ -1,10 +1,12 @@
 package com.aldokenfack.SickleCareAI.service;
 
+import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.User;
 import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.ValidationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -22,7 +24,7 @@ public class ValidationService {
         Validation validation = new Validation();
 
         Instant creation = Instant.now();
-        Instant expiration = creation.plus(15, ChronoUnit.MINUTES);
+        Instant expiration = creation.plus(10, ChronoUnit.MINUTES);
 
         SecureRandom random = new SecureRandom();
         Integer randomInteger = random.nextInt(999999);
@@ -37,6 +39,12 @@ public class ValidationService {
 
         notificationService.sendActivationMessage(validation);
 
+    }
+
+
+    public Validation readCode(String code){
+
+        return validationRepository.findByCode(code).orElseThrow(() -> new UserNotFoundException("Error : code not found"));
     }
 
 }
