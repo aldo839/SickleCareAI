@@ -1,5 +1,6 @@
 package com.aldokenfack.SickleCareAI.service;
 
+import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.dto.DoctorRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorUpdateDTO;
@@ -27,6 +28,7 @@ public class DoctorService {
     private final DoctorMapperService doctorMapperService;
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
+    private final JwtUtils jwtUtils;
 
     public DoctorResponseDTO registerDoctor(DoctorRegistrationDTO dto){
 
@@ -80,7 +82,7 @@ public class DoctorService {
         doctor.setActivated(true);
         doctorRepository.save(doctor);
 
-        return  doctor.getActivated().toString();
+        return jwtUtils.generateToken(doctor.getUsername());
     }
 
 
