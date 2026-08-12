@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class PatientRegistrationDTO {
 
     @NotBlank(message = "Username is require !")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Username must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d._-]+$", message = "Username must only contain letters, numbers, dots, or dashes")
     @Size(min = 4, max = 20, message = "Username must have between 4 and 20 characters !")
     private String username;
 
@@ -28,23 +28,22 @@ public class PatientRegistrationDTO {
     private String password;
 
     @Size(max = 20, message = "Firstname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String firstname;
 
     @Size(max = 20, message = "Lastname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String lastname;
 
-    @Pattern(regexp = "^(MALE|FEMALE|male|female)$", message = "Invalid sex, please choose between MALE and FEMALE")
     private Sex sex;
 
     @Past(message = "You birth date must be pass")
     private LocalDate birthdate;
 
-    @Pattern(regexp = "^(AA|AS|SS|AC|SC|CC)$", message = "Invalid Blood Type, choose one between AA, AS, SS, AC, SC, CC")
+    @NotNull(message = "Genotype is mandatory, choose one between AA, AS, SS, AC, SC, CC")
     private Genotype genotype;
 
-    @Pattern(regexp = "^(A|B|AB|O)$", message = "Invalid Blood Type, choose one between A+, A-, B+, B-, AB+, AB-, O+, O-")
+    @NotNull(message = "Blood type is mandatory, choose between A+, A-, B+, B-, AB+, AB-, O+, O-")
     private Bloodtype bloodtype;
 
     @Positive(message = "Weight must be positive !")
@@ -52,11 +51,11 @@ public class PatientRegistrationDTO {
     private Double weight;
 
     @Size(max = 20, message = "Region must be less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Region must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Region must only contain letter, number and space")
     private String region;
 
     @Size(max = 20, message = "City must be less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Region must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Region must only contain letter, number and space")
     private String city;
 
 }
