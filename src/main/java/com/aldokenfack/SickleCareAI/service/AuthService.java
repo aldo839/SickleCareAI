@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserMapperService userMapperService;
     private final UserRepository userRepository;
