@@ -2,7 +2,9 @@ package com.aldokenfack.SickleCareAI.dto;
 
 import com.aldokenfack.SickleCareAI.model.Role;
 
-public record UserResponseDTO(
+public record UserLoginResponseDTO(
+
+        String token,
 
         String username,
 
