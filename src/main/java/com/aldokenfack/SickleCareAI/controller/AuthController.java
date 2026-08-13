@@ -1,7 +1,7 @@
 package com.aldokenfack.SickleCareAI.controller;
 
 import com.aldokenfack.SickleCareAI.dto.UserLoginRequestDTO;
-import com.aldokenfack.SickleCareAI.dto.UserResponseDTO;
+import com.aldokenfack.SickleCareAI.dto.UserLoginResponseDTO;
 import com.aldokenfack.SickleCareAI.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginRequestDTO dto){
+    public ResponseEntity<UserLoginResponseDTO> loginUser(@Valid @RequestBody UserLoginRequestDTO dto){
 
-        UserResponseDTO userResponseDTO = authService.loginUser(dto);
+        UserLoginResponseDTO userResponseDTO = authService.loginUser(dto);
 
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
