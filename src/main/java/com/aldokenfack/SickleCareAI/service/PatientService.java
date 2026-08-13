@@ -97,12 +97,25 @@ public class PatientService {
 
             Patient patient = patientToUpdate.get();
 
-            patient.setUsername(dto.getUsername());
-            patient.setEmail(dto.getEmail());
-            patient.setPassword(dto.getEmail());
-            patient.setWeight(dto.getWeight());
-            patient.setRegion(dto.getRegion());
-            patient.setCity(dto.getCity());
+            // Condition to update only the authorized field if isn't null
+            if (dto.getUsername() != null && !dto.getUsername().isEmpty()){
+                patient.setUsername(dto.getUsername());
+            }
+            if (dto.getEmail() != null && !dto.getEmail().isEmpty()){
+                patient.setEmail(dto.getEmail());
+            }
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()){
+                patient.setPassword(dto.getEmail());
+            }
+            if (dto.getWeight() != null && dto.getWeight() > 0){
+                patient.setWeight(dto.getWeight());
+            }
+            if (dto.getRegion() != null && !dto.getRegion().isEmpty()){
+                patient.setRegion(dto.getRegion());
+            }
+            if (dto.getCity() != null && !dto.getCity().isEmpty()){
+                patient.setCity(dto.getCity());
+            }
 
             updatedPatient = patientRepository.save(patient);
 
