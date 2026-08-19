@@ -17,7 +17,7 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
-    private UUID userId;
+    private UUID publicId;
 
     private String username;
 
