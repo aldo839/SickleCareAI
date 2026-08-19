@@ -12,7 +12,7 @@ import lombok.Setter;
 public class DoctorRegistrationDTO {
 
     @NotBlank(message = "Username is require !")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Username must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Username must only contain letter and number")
     @Size(min = 4, max = 20, message = "Username must have between 4 and 20 characters !")
     private String username;
 
