@@ -2,6 +2,8 @@ package com.aldokenfack.SickleCareAI.dto;
 
 public record DoctorResponseDTO(
 
+        Long id,
+
         String username,
 
         String email,

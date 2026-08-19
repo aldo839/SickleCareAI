@@ -11,6 +11,7 @@ public class DoctorMapperService {
 
         return new DoctorResponseDTO(
 
+                doctor.getId(),
                 doctor.getUsername(),
                 doctor.getEmail(),
                 doctor.getFirstname(),
