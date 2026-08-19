@@ -12,7 +12,6 @@ public class UserMapperService {
         return new UserLoginResponseDTO(
 
                 user.getUsername(),
-                user.getRole(),
                 accessToken,
                 refreshToken
 
