@@ -156,11 +156,12 @@ public class DoctorService {
 
         Long currentUserId = authService.getCurrentUser().getId();
 
-        Doctor doctorToDelete = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
 
-        doctorRepository.deleteById(id);
-        log.warn("Doctor delete by the user with id : " + currentUserId);
+        doctorRepository.delete(doctor);
+
+        log.warn("Doctor {} delete by the user with id : {}", doctor.getUsername(), currentUserId);
 
     }
 

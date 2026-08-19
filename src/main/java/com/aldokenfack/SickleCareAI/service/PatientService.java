@@ -14,6 +14,7 @@ import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatientService {
@@ -134,13 +136,14 @@ public class PatientService {
 
     public void deletePatient(Long id){
 
-        Optional<Patient> patientToDelete = patientRepository.findById(id);
+        Long currentUserId = authService.getCurrentUser().getId();
 
-        if (patientToDelete.isPresent()){
-            patientRepository.deleteById(id);
-        } else {
-            throw new UserNotFoundException("Patient Not found !");
-        }
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        patientRepository.delete(patient);
+
+        log.warn("Patient {} delete by the user with id : {}", patient.getUsername(), currentUserId);
     }
 
 
