@@ -1,5 +1,7 @@
 package com.aldokenfack.SickleCareAI.service;
 
+import com.aldokenfack.SickleCareAI.model.Role;
+import com.aldokenfack.SickleCareAI.model.User;
 import com.aldokenfack.SickleCareAI.model.Validation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
@@ -37,6 +39,48 @@ public class NotificationService {
             System.out.println("DEBUG : " + validation.getCode());
         }
 
+    }
+
+
+    public void sendAdminValidationSuccess(User user){
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            String subject = null;
+            String text = null;
+
+            if (user.getRole() == Role.ROLE_PATIENT){
+
+                 subject = "SickleCare Patient Account Validation";
+
+                 text = String.format(
+                         "Hello %s, \nYour account has been officially validated by our administration. " +
+                                 "You can now access all features of SickleCare AI." +
+                                 "\n See you on the App to select your doctor !",
+                         user.getUsername()
+                 );
+
+            } else if (user.getRole() == Role.ROLE_DOCTOR) {
+
+                subject = "SickleCare Doctor Account Validation";
+
+                text = String.format(
+                        "Hello %s, \nYour account has been officially validated by our administration. " +
+                                "You can now access all features of SickleCare AI." +
+                                "\n You can now be selected by patients on the App !",
+                        user.getUsername()
+                );
+            }
+
+            message.setFrom("no-reply@sicklecare.org");
+            message.setTo(user.getEmail());
+            message.setSubject(subject);
+            message.setText(text);
+
+        } catch (MailException e) {
+            System.err.println("SMTP Error (Admin Validation): " + e.getMessage());
+        }
     }
 
 }
