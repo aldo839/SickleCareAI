@@ -18,6 +18,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     void deleteByPublicId(UUID publicId);
 
-    Optional<Patient> findByDoctorId(Long doctorId);
+    Optional<Patient> findByDoctorPublicId(UUID doctorId);
 
 }

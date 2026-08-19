@@ -15,14 +15,14 @@ import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -88,23 +88,23 @@ public class PatientService {
     }
 
 
-    public PatientResponseDTO getPatientById(Long id){
+    public PatientResponseDTO getPatientById(UUID patientId){
 
-        return patientRepository.findById(id)
+        return patientRepository.findByPublicId(patientId)
                 .map(patientMapperService::mapToResponseDTO)
                 .orElseThrow(() -> new UserNotFoundException("Patient not found !"));
     }
 
 
-    public PatientResponseDTO updatePatient(Long id, PatientUpdateDTO dto) throws AccessDeniedException {
+    public PatientResponseDTO updatePatient(UUID patientId, PatientUpdateDTO dto) throws AccessDeniedException {
 
         // Fetch the id of the user who is authenticated
-        Long currentUserId = authService.getCurrentUser().getId();
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
-        Patient patient = patientRepository.findById(id)
+        Patient patient = patientRepository.findByPublicId(patientId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (!patient.getId().equals(currentUserId)){
+        if (!patientId.equals(currentUserId)){
             throw new AccessDeniedException("You cannot update this user");
         }
 
@@ -134,11 +134,11 @@ public class PatientService {
     }
 
 
-    public void deletePatient(Long id){
+    public void deletePatient(UUID patientId){
 
-        Long currentUserId = authService.getCurrentUser().getId();
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
-        Patient patient = patientRepository.findById(id)
+        Patient patient = patientRepository.findByPublicId(patientId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         patientRepository.delete(patient);
@@ -165,9 +165,9 @@ public class PatientService {
     }
 
 
-    public PatientResponseDTO validatePatient(Long id){
+    public PatientResponseDTO validatePatient(UUID patientId){
 
-        Patient patient = patientRepository.findById(id)
+        Patient patient = patientRepository.findByPublicId(patientId)
                 .orElseThrow(() -> new UserNotFoundException("Patient not found"));
 
         patient.setValidated(true);
@@ -181,15 +181,15 @@ public class PatientService {
     }
 
 
-    public PatientResponseDTO selectDoctor(Long patientId, Long doctorId) throws AccessDeniedException {
+    public PatientResponseDTO selectDoctor(UUID patientId, UUID doctorId) {
 
-        Long currentUserId = authService.getCurrentUser().getId();
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
         // Verify that patient and doctor exists before applying selection
-        Patient patient = patientRepository.findById(patientId)
+        Patient patient = patientRepository.findByPublicId(patientId)
                 .orElseThrow(() -> new UserNotFoundException("Patient not found"));
 
-        Doctor doctor = doctorRepository.findById(doctorId)
+        Doctor doctor = doctorRepository.findByPublicId(doctorId)
                 .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
 
         if (!patientId.equals(currentUserId)){
@@ -204,6 +204,7 @@ public class PatientService {
 
         Patient savedPatient = patientRepository.save(patient);
 
+        log.info("Patient '{}' have choose the doctor with username '{}'", patient.getUsername(), doctor.getUsername());
         return patientMapperService.mapToResponseDTO(savedPatient);
 
     }

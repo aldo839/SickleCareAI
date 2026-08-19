@@ -11,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,9 +33,9 @@ public class DoctorController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'DOCTOR') or #id == authentication.principal.id")
-    public ResponseEntity<DoctorResponseDTO> getDoctorById(@PathVariable Long id){
+    public ResponseEntity<DoctorResponseDTO> getDoctorById(@PathVariable UUID doctorId){
 
-        return new ResponseEntity<>(doctorService.getDoctorById(id), HttpStatus.OK);
+        return new ResponseEntity<>(doctorService.getDoctorById(doctorId), HttpStatus.OK);
     }
 
 
@@ -57,26 +57,26 @@ public class DoctorController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @PathVariable Long id, @RequestBody DoctorUpdateDTO dto) throws AccessDeniedException {
+    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @PathVariable UUID doctorId, @RequestBody DoctorUpdateDTO dto) {
 
-        return new ResponseEntity<>(doctorService.updateDoctor(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(doctorService.updateDoctor(doctorId, dto), HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDoctor(@PathVariable UUID doctorId) {
 
-        doctorService.deleteDoctor(id);
+        doctorService.deleteDoctor(doctorId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @PutMapping("/validate-doctor/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public ResponseEntity<DoctorResponseDTO> validateDoctor(@PathVariable Long id){
+    public ResponseEntity<DoctorResponseDTO> validateDoctor(@PathVariable UUID doctorId){
 
-        return new ResponseEntity<>(doctorService.validateDoctor(id), HttpStatus.OK);
+        return new ResponseEntity<>(doctorService.validateDoctor(doctorId), HttpStatus.OK);
     }
 
 }

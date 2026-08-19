@@ -10,6 +10,7 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.*;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
+import org.springframework.security.access.AccessDeniedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -103,23 +100,23 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO getDoctorById(Long id){
+    public DoctorResponseDTO getDoctorById(UUID doctorId){
 
-        return doctorRepository.findById(id)
+        return doctorRepository.findByPublicId(doctorId)
                 .map(doctorMapperService::mapToResponseDTO)
                 .orElseThrow(() -> new UserNotFoundException("Doctor not found !"));
     }
 
 
-    public DoctorResponseDTO updateDoctor(Long id, DoctorUpdateDTO dto) throws AccessDeniedException {
+    public DoctorResponseDTO updateDoctor(UUID doctorId, DoctorUpdateDTO dto) {
 
         // Fetch the id of the user who is authenticated
-        Long currentUserId = authService.getCurrentUser().getId();
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
-        Doctor doctor = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findByPublicId(doctorId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (!doctor.getId().equals(currentUserId)){
+        if (!doctorId.equals(currentUserId)){
             throw new AccessDeniedException("You cannot update this user");
         }
 
@@ -152,11 +149,11 @@ public class DoctorService {
     }
 
 
-    public void deleteDoctor(Long id){
+    public void deleteDoctor(UUID doctorId){
 
-        Long currentUserId = authService.getCurrentUser().getId();
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
-        Doctor doctor = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findByPublicId(doctorId)
                 .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
 
         doctorRepository.delete(doctor);
@@ -167,9 +164,11 @@ public class DoctorService {
 
 
     // Validate doctor account by admin
-    public DoctorResponseDTO validateDoctor(Long id){
+    public DoctorResponseDTO validateDoctor(UUID doctorId){
 
-        Doctor doctor = doctorRepository.findById(id)
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
+
+        Doctor doctor = doctorRepository.findByPublicId(doctorId)
                 .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
 
         doctor.setValidated(true);
@@ -179,14 +178,15 @@ public class DoctorService {
         // Send notification for successfully validation by admin
         notificationService.sendAdminValidationSuccess(doctor);
 
+        log.info("Admin with id {} have activated the user doctor with username : {}", currentUserId, doctor.getUsername());
         return doctorMapperService.mapToResponseDTO(doctor);
     }
 
 
     // Fetch all patients of one doctor
-    public List<PatientResponseDTO> getPatientByDoctor(Long doctorId){
+    public List<PatientResponseDTO> getPatientByDoctor(UUID doctorId){
 
-        return patientRepository.findByDoctorId(doctorId).stream()
+        return patientRepository.findByDoctorPublicId(doctorId).stream()
                 .map(patientMapperService::mapToResponseDTO)
                 .toList();
     }

@@ -16,4 +16,6 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Optional<Admin> findByPublicId(UUID publicId);
 
+    void deleteByPublicId(UUID publicId);
+
 }

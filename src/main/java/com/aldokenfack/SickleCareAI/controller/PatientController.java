@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -35,9 +35,9 @@ public class PatientController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'DOCTOR') or #id == authentication.principal.id")
-    public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable Long id){
+    public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable UUID patientId){
 
-        return new ResponseEntity<>(patientService.getPatientById(id), HttpStatus.OK);
+        return new ResponseEntity<>(patientService.getPatientById(patientId), HttpStatus.OK);
     }
 
 
@@ -59,30 +59,30 @@ public class PatientController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @PathVariable Long id, @RequestBody PatientUpdateDTO dto) throws AccessDeniedException {
+    public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @PathVariable UUID patientId, @RequestBody PatientUpdateDTO dto) {
 
-        return new ResponseEntity<>(patientService.updatePatient(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(patientService.updatePatient(patientId, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable UUID patientId){
 
-        patientService.deletePatient(id);
+        patientService.deletePatient(patientId);
     }
 
     @PutMapping("/select-doctor/{id}")
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<PatientResponseDTO> selectDoctor(@PathVariable Long id, @RequestBody Long doctorId) throws AccessDeniedException{
+    public ResponseEntity<PatientResponseDTO> selectDoctor(@PathVariable UUID patientId, @RequestBody UUID doctorId) {
         // PatientId is "id"
-        return new ResponseEntity<>(patientService.selectDoctor(id, doctorId), HttpStatus.OK);
+        return new ResponseEntity<>(patientService.selectDoctor(patientId, doctorId), HttpStatus.OK);
     }
 
     @PutMapping("/validate-patient/{id}")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public ResponseEntity<PatientResponseDTO> validateDoctor(@PathVariable Long id){
+    public ResponseEntity<PatientResponseDTO> validateDoctor(@PathVariable UUID patientId){
 
-        return new ResponseEntity<>(patientService.validatePatient(id), HttpStatus.OK);
+        return new ResponseEntity<>(patientService.validatePatient(patientId), HttpStatus.OK);
     }
 
 }

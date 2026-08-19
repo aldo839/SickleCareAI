@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -33,9 +34,9 @@ public class AdminController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROOT') or #id == authentication.principal.id")
-    public ResponseEntity<AdminResponseDTO> getAdminById(@PathVariable Long id){
+    public ResponseEntity<AdminResponseDTO> getAdminById(@PathVariable UUID adminId){
 
-        return new ResponseEntity<>(adminService.getAdminById(id), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.getAdminById(adminId), HttpStatus.OK);
     }
 
 
@@ -49,17 +50,17 @@ public class AdminController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROOT) or #id == authentication.principal.id")
-    public ResponseEntity<AdminResponseDTO> updateAdmin(@Valid @PathVariable Long id, @RequestBody AdminUpdateDTO dto){
+    public ResponseEntity<AdminResponseDTO> updateAdmin(@Valid @PathVariable UUID adminId, @RequestBody AdminUpdateDTO dto){
 
-        return new ResponseEntity<>(adminService.updateAdmin(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.updateAdmin(adminId, dto), HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROOT')")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable UUID adminId){
 
-        adminService.deleteAdmin(id);
+        adminService.deleteAdmin(adminId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
