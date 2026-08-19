@@ -97,10 +97,10 @@ public class AdminService {
 
     public void deleteAdmin(UUID publicId){
 
-        Admin adminToDelete = adminRepository.findByPublicId(publicId)
+        Admin admin = adminRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        this.adminRepository.deleteByPublicId(publicId);
+        this.adminRepository.delete(admin);
     }
 
 }
