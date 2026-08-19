@@ -2,6 +2,8 @@ package com.aldokenfack.SickleCareAI.filter;
 
 import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.service.CustomUserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,17 +30,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        String username = null;
+        String email = null;
         String jwt = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             jwt = authHeader.substring(7);
-            username = jwtUtils.extractUsername(jwt);
+
+            try {
+                email = jwtUtils.extractEmail(jwt);
+            } catch (ExpiredJwtException e) {
+                logger.warn("Token JWT expire : " + e.getMessage());
+            } catch (JwtException e) {
+                logger.warn("Invalid Token JWT : " + e.getMessage());
+            }
+
         }
 
         // Verify that user are not yet authentify
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
             if (jwtUtils.validateToken(jwt, userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
