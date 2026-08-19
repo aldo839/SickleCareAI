@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,17 +53,24 @@ public class DoctorController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @PathVariable Long id, @RequestBody DoctorUpdateDTO dto){
+    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @PathVariable Long id, @RequestBody DoctorUpdateDTO dto) throws AccessDeniedException {
 
         return new ResponseEntity<>(doctorService.updateDoctor(id, dto), HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id){
+    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
 
         doctorService.deleteDoctor(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PutMapping("/validate-doctor/{id}")
+    public ResponseEntity<DoctorResponseDTO> validateDoctor(@PathVariable Long id){
+
+        return new ResponseEntity<>(doctorService.validateDoctor(id), HttpStatus.OK);
     }
 
 }
