@@ -4,11 +4,13 @@ import com.aldokenfack.SickleCareAI.model.Role;
 
 public record UserLoginResponseDTO(
 
-        String token,
-
         String username,
 
-        Role role
+        Role role,
+
+        String token,
+
+        String refreshToken
 
 ) {
 }
