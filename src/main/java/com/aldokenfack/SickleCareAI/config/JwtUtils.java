@@ -23,15 +23,15 @@ public class JwtUtils {
     @Value("${app.expiration-time}")
     private Long expirationTime;
 
-    public String generateToken(String username){
+    public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(username, claims);
+        return createToken(email, claims);
     }
 
-    private String createToken(String username, Map<String, Object> claims) {
+    private String createToken(String email, Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSingKey(), SignatureAlgorithm.HS256)
@@ -43,20 +43,20 @@ public class JwtUtils {
         return new SecretKeySpec(keyByte, SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails){
-        String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpire(token));
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        String email = extractEmail(token);
+        return (email.equalsIgnoreCase(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private boolean isTokenExpire(String token) {
+    private boolean isTokenExpired(String token) {
         return extractExpirationTime(token).before(new Date());
     }
 
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaims(token, Claims::getSubject);
     }
 
-    private Date extractExpirationTime(String token){
+    private Date extractExpirationTime(String token) {
         return extractClaims(token, Claims::getExpiration);
     }
 
@@ -69,8 +69,7 @@ public class JwtUtils {
         return Jwts.parserBuilder()
                 .setSigningKey(getSingKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
-
 }
