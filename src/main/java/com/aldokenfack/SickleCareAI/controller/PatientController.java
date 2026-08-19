@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class PatientController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @PathVariable Long id, @RequestBody PatientUpdateDTO dto){
+    public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @PathVariable Long id, @RequestBody PatientUpdateDTO dto) throws AccessDeniedException {
 
         return new ResponseEntity<>(patientService.updatePatient(id, dto), HttpStatus.OK);
     }
@@ -63,6 +64,18 @@ public class PatientController {
     public void delete(@PathVariable Long id){
 
         patientService.deletePatient(id);
+    }
+
+    @PutMapping("/select-doctor/{id}")
+    public ResponseEntity<PatientResponseDTO> selectDoctor(@PathVariable Long id, @RequestBody Long doctorId) throws AccessDeniedException{
+        // PatientId is "id"
+        return new ResponseEntity<>(patientService.selectDoctor(id, doctorId), HttpStatus.OK);
+    }
+
+    @PutMapping("/validate-patient/{id}")
+    public ResponseEntity<PatientResponseDTO> validateDoctor(@PathVariable Long id){
+
+        return new ResponseEntity<>(patientService.validatePatient(id), HttpStatus.OK);
     }
 
 }
