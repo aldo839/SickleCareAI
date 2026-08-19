@@ -4,24 +4,29 @@ import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.dto.DoctorRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.DoctorUpdateDTO;
+import com.aldokenfack.SickleCareAI.dto.PatientResponseDTO;
 import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
-import com.aldokenfack.SickleCareAI.model.Doctor;
-import com.aldokenfack.SickleCareAI.model.Role;
-import com.aldokenfack.SickleCareAI.model.Validation;
+import com.aldokenfack.SickleCareAI.model.*;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
+import com.aldokenfack.SickleCareAI.repository.PatientRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
@@ -29,6 +34,10 @@ public class DoctorService {
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
     private final JwtUtils jwtUtils;
+    private final PatientRepository patientRepository;
+    private final PatientMapperService patientMapperService;
+    private final NotificationService notificationService;
+    private final AuthService authService;
 
     public DoctorResponseDTO registerDoctor(DoctorRegistrationDTO dto){
 
@@ -82,7 +91,7 @@ public class DoctorService {
         doctor.setActivated(true);
         doctorRepository.save(doctor);
 
-        return jwtUtils.generateToken(doctor.getUsername());
+        return jwtUtils.generateToken(doctor.getEmail());
     }
 
 
@@ -102,29 +111,42 @@ public class DoctorService {
     }
 
 
-    public DoctorResponseDTO updateDoctor(Long id, DoctorUpdateDTO dto){
+    public DoctorResponseDTO updateDoctor(Long id, DoctorUpdateDTO dto) throws AccessDeniedException {
 
-        Doctor updatedDoctor = null;
+        // Fetch the id of the user who is authenticated
+        Long currentUserId = authService.getCurrentUser().getId();
 
-        Optional<Doctor> doctorToUpdate = doctorRepository.findById(id);
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (doctorToUpdate.isPresent()){
-
-            Doctor doctor = doctorToUpdate.get();
-
-            doctor.setUsername(dto.getUsername());
-            doctor.setEmail(dto.getEmail());
-            doctor.setPassword(passwordEncoder.encode(dto.getPassword()));
-            doctor.setHospitalUnit(dto.getHospitalUnit());
-            doctor.setRegion(dto.getRegion());
-            doctor.setCity(dto.getCity());
-            doctor.setHospital(dto.getHospital());
-
-            updatedDoctor = doctorRepository.save(doctor);
-
-        } else {
-            throw new UserNotFoundException("Doctor not found !");
+        if (!doctor.getId().equals(currentUserId)){
+            throw new AccessDeniedException("You cannot update this user");
         }
+
+        // Condition to update only the authorized field if isn't null
+        if (dto.getUsername() != null && !dto.getUsername().isBlank()){
+            doctor.setUsername(dto.getUsername());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()){
+            doctor.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()){
+            doctor.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        if (dto.getHospital() != null && !dto.getHospital().isBlank()){
+            doctor.setHospital(dto.getHospital());
+        }
+        if (dto.getHospitalUnit() != null && !dto.getHospitalUnit().isBlank()){
+            doctor.setHospitalUnit(dto.getHospitalUnit());
+        }
+        if (dto.getRegion() != null && !dto.getRegion().isBlank()){
+            doctor.setRegion(dto.getRegion());
+        }
+        if (dto.getCity() != null && !dto.getCity().isBlank()){
+            doctor.setCity(dto.getCity());
+        }
+
+        Doctor updatedDoctor = doctorRepository.save(doctor);
 
         return doctorMapperService.mapToResponseDTO(updatedDoctor);
     }
@@ -132,13 +154,40 @@ public class DoctorService {
 
     public void deleteDoctor(Long id){
 
-        Optional<Doctor> doctorToDelete = doctorRepository.findById(id);
+        Long currentUserId = authService.getCurrentUser().getId();
 
-        if (doctorToDelete.isPresent()){
-            doctorRepository.deleteById(id);
-        } else {
-            throw new UserNotFoundException("Doctor not found !");
-        }
+        Doctor doctorToDelete = doctorRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
+
+        doctorRepository.deleteById(id);
+        log.warn("Doctor delete by the user with id : " + currentUserId);
+
+    }
+
+
+    // Validate doctor account by admin
+    public DoctorResponseDTO validateDoctor(Long id){
+
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Doctor not found"));
+
+        doctor.setValidated(true);
+
+        this.doctorRepository.save(doctor);
+
+        // Send notification for successfully validation by admin
+        notificationService.sendAdminValidationSuccess(doctor);
+
+        return doctorMapperService.mapToResponseDTO(doctor);
+    }
+
+
+    // Fetch all patients of one doctor
+    public List<PatientResponseDTO> getPatientByDoctor(Long doctorId){
+
+        return patientRepository.findByDoctorId(doctorId).stream()
+                .map(patientMapperService::mapToResponseDTO)
+                .toList();
     }
 
 }
