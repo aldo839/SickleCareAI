@@ -7,6 +7,7 @@ import com.aldokenfack.SickleCareAI.service.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public class AdminController {
     }
 
 
-    @GetMapping
+    @GetMapping("/get-all")
+    @PreAuthorize("hasRole('ROOT')")
     public ResponseEntity<List<AdminResponseDTO>> getAllAdmin(){
 
         return new ResponseEntity<>(adminService.getAllAdmin(), HttpStatus.OK);
@@ -30,13 +32,15 @@ public class AdminController {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROOT') or #id == authentication.principal.id")
     public ResponseEntity<AdminResponseDTO> getAdminById(@PathVariable Long id){
 
         return new ResponseEntity<>(adminService.getAdminById(id), HttpStatus.OK);
     }
 
 
-    @PostMapping
+    @PostMapping("/register-admin")
+    @PreAuthorize("hasRole('ROOT')")
     public ResponseEntity<AdminResponseDTO> registerAdmin(@Valid @RequestBody AdminRegistrationDTO dto){
 
         return new ResponseEntity<>(adminService.registerAdmin(dto), HttpStatus.CREATED);
@@ -44,6 +48,7 @@ public class AdminController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROOT) or #id == authentication.principal.id")
     public ResponseEntity<AdminResponseDTO> updateAdmin(@Valid @PathVariable Long id, @RequestBody AdminUpdateDTO dto){
 
         return new ResponseEntity<>(adminService.updateAdmin(id, dto), HttpStatus.OK);
@@ -51,6 +56,7 @@ public class AdminController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROOT')")
     public ResponseEntity<Void> delete(@PathVariable Long id){
 
         adminService.deleteAdmin(id);
