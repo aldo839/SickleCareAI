@@ -9,11 +9,13 @@ import com.aldokenfack.SickleCareAI.model.Admin;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class AdminService {
     private final AdminMapperService adminMapperService;
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
+    private final AuthService authService;
 
     public AdminResponseDTO registerAdmin(AdminRegistrationDTO dto){
 
@@ -63,45 +66,41 @@ public class AdminService {
     }
 
 
-    public AdminResponseDTO getAdminById(Long id){
+    public AdminResponseDTO getAdminById(UUID publicId){
 
-        return adminRepository.findById(id)
+        return adminRepository.findByPublicId(publicId)
                 .map(adminMapperService::mapToResponseDTO)
                 .orElseThrow(() -> new UserNotFoundException("Admin mot found !"));
     }
 
 
-    public AdminResponseDTO updateAdmin(Long id, AdminUpdateDTO dto){
+    public AdminResponseDTO updateAdmin(UUID publicId, AdminUpdateDTO dto){
 
-        Admin updatedAdmin = null;
+        UUID currentUserId = authService.getCurrentUser().getPublicId();
 
-        Optional<Admin> adminToUpdate = adminRepository.findById(id);
+        Admin admin = adminRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (adminToUpdate.isPresent()){
-
-            Admin admin = adminToUpdate.get();
-
-            admin.setUsername(dto.getUsername());
-            admin.setEmail(dto.getEmail());
-            admin.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-            updatedAdmin = adminRepository.save(admin);
-        } else {
-            throw new UserNotFoundException("Admin not found !");
+        if (!publicId.equals(currentUserId)){
+            throw new AccessDeniedException("You cannot update this user");
         }
+
+        admin.setUsername(dto.getUsername());
+        admin.setEmail(dto.getEmail());
+        admin.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        Admin updatedAdmin = adminRepository.save(admin);
 
         return adminMapperService.mapToResponseDTO(updatedAdmin);
     }
 
 
-    public void deleteAdmin(Long id){
+    public void deleteAdmin(UUID publicId){
 
-        Optional<Admin> adminToDelete = adminRepository.findById(id);
+        Admin adminToDelete = adminRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (adminToDelete.isPresent()){
-            adminRepository.deleteById(id);
-        }
-        throw new UserNotFoundException("Admin not found !");
+        this.adminRepository.deleteByPublicId(publicId);
     }
 
 }
