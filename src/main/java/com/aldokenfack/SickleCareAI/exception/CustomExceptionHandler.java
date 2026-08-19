@@ -34,4 +34,16 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(AccountNotValidatedException.class)
+    public ResponseEntity<ApiError> handleAccountNotValidatedException(AccountNotValidatedException e){
+
+        ApiError apiError = new ApiError();
+
+        apiError.setMessage(e.getMessage());
+        apiError.setError(HttpStatus.UNAUTHORIZED.value());
+        apiError.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
 }
