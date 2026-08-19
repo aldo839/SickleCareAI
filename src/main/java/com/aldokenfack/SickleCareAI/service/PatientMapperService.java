@@ -30,7 +30,8 @@ public class PatientMapperService {
                 patient.getBloodtype(),
                 patient.getWeight(),
                 patient.getRegion(),
-                patient.getCity()
+                patient.getCity(),
+                patient.getDoctor().getId()
 
         );
 

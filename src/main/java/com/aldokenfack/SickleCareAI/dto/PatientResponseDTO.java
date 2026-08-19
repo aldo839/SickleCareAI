@@ -29,7 +29,9 @@ public record PatientResponseDTO(
 
         String region,
 
-        String city
+        String city,
 
-) {
+        Long doctorId
+
+){
 }
