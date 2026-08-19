@@ -7,6 +7,7 @@ import com.aldokenfack.SickleCareAI.service.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -24,7 +25,8 @@ public class PatientController {
     }
 
 
-    @GetMapping
+    @GetMapping("/get-all")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'DOCTOR')")
     public ResponseEntity<List<PatientResponseDTO>> getAllPatient(){
 
         return new ResponseEntity<>(patientService.getAllPatients(), HttpStatus.OK);
@@ -32,6 +34,7 @@ public class PatientController {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'DOCTOR') or #id == authentication.principal.id")
     public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable Long id){
 
         return new ResponseEntity<>(patientService.getPatientById(id), HttpStatus.OK);
@@ -55,24 +58,28 @@ public class PatientController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @PathVariable Long id, @RequestBody PatientUpdateDTO dto) throws AccessDeniedException {
 
         return new ResponseEntity<>(patientService.updatePatient(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     public void delete(@PathVariable Long id){
 
         patientService.deletePatient(id);
     }
 
     @PutMapping("/select-doctor/{id}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<PatientResponseDTO> selectDoctor(@PathVariable Long id, @RequestBody Long doctorId) throws AccessDeniedException{
         // PatientId is "id"
         return new ResponseEntity<>(patientService.selectDoctor(id, doctorId), HttpStatus.OK);
     }
 
     @PutMapping("/validate-patient/{id}")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     public ResponseEntity<PatientResponseDTO> validateDoctor(@PathVariable Long id){
 
         return new ResponseEntity<>(patientService.validatePatient(id), HttpStatus.OK);
