@@ -75,9 +75,9 @@ public class DoctorService {
     }
 
 
-    public String activation(Map<String, String> ativation){
+    public String activation(Map<String, String> activation){
 
-        Validation validation = validationService.readCode(ativation.get("code"));
+        Validation validation = validationService.readCode(activation.get("code"));
 
         if (Instant.now().isAfter(validation.getExpiration())){
             throw new RuntimeException("Your code is expire");
