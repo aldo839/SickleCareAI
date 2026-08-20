@@ -1,11 +1,14 @@
 package com.aldokenfack.SickleCareAI.controller;
 
 import com.aldokenfack.SickleCareAI.config.JwtUtils;
+import com.aldokenfack.SickleCareAI.dto.ForgotPasswordRequestDTO;
+import com.aldokenfack.SickleCareAI.dto.ResetPasswordRequestDTO;
 import com.aldokenfack.SickleCareAI.dto.UserLoginRequestDTO;
 import com.aldokenfack.SickleCareAI.dto.UserLoginResponseDTO;
 import com.aldokenfack.SickleCareAI.repository.JwtRefreshTokenRepository;
 import com.aldokenfack.SickleCareAI.service.AuthService;
 import com.aldokenfack.SickleCareAI.service.JwtRefreshTokenService;
+import com.aldokenfack.SickleCareAI.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ public class AuthController {
     private final JwtRefreshTokenRepository jwtRefreshTokenRepository;
     private final JwtRefreshTokenService jwtRefreshTokenService;
     private final JwtUtils jwtUtils;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDTO> loginUser(@Valid @RequestBody UserLoginRequestDTO dto){
@@ -64,6 +68,23 @@ public class AuthController {
                     return ResponseEntity.ok("Logged out successfully.");
                 })
                 .orElse(ResponseEntity.badRequest().body("Invalid refresh token."));
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDTO dto){
+
+        passwordResetService.processForgotPassword(dto);
+
+        return ResponseEntity.ok("Password reset link send to your email.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequestDTO dto){
+
+        passwordResetService.updatePassword(dto);
+
+        return ResponseEntity.ok("Password reset successful.");
     }
 
 }
