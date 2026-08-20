@@ -5,23 +5,22 @@ import com.aldokenfack.SickleCareAI.dto.AdminResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminUpdateDTO;
 import com.aldokenfack.SickleCareAI.service.AdminService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
-
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
-    }
 
 
     @GetMapping("/get-all")
@@ -45,6 +44,16 @@ public class AdminController {
     public ResponseEntity<AdminResponseDTO> registerAdmin(@Valid @RequestBody AdminRegistrationDTO dto){
 
         return new ResponseEntity<>(adminService.registerAdmin(dto), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/activate-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> activateAdmin(@PathVariable Map<String, String> activation){
+
+        String status = adminService.activateAdmin(activation);
+
+        return ResponseEntity.ok("Account successfully activate. \nStatus : " + status);
     }
 
 
