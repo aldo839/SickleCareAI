@@ -1,13 +1,16 @@
 package com.aldokenfack.SickleCareAI.service;
 
+import com.aldokenfack.SickleCareAI.model.PasswordResetToken;
 import com.aldokenfack.SickleCareAI.model.Role;
 import com.aldokenfack.SickleCareAI.model.User;
 import com.aldokenfack.SickleCareAI.model.Validation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +38,7 @@ public class NotificationService {
             javaMailSender.send(message);
 
         } catch (MailException e) {
-            System.err.println("Error : " + e.getMessage());
-            System.out.println("DEBUG : " + validation.getCode());
+            throw new MailSendException("Problem to send a mail");
         }
 
     }
@@ -78,9 +80,40 @@ public class NotificationService {
             message.setSubject(subject);
             message.setText(text);
 
+            javaMailSender.send(message);
+
         } catch (MailException e) {
-            System.err.println("SMTP Error (Admin Validation): " + e.getMessage());
+            throw new MailSendException("Problem to send a mail");
         }
+    }
+
+
+    public void sendResetPasswordMessage(PasswordResetToken passwordResetToken){
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            // Adding of the URL of frontend
+            String baseUrl = "http://localhost:4200";
+            String resetLink = baseUrl + "/reset-password?token=" + passwordResetToken.getToken();
+
+            String text = String.format(
+                    "We received a request to reset the password for %s.\nFollow the link below to set a new password.\n%s",
+                    passwordResetToken.getUser().getEmail(),
+                    resetLink
+            );
+
+            message.setFrom("no-reply@sicklecare.org");
+            message.setTo(passwordResetToken.getUser().getEmail());
+            message.setSubject("Reset your password");
+            message.setText(text);
+
+            javaMailSender.send(message);
+
+        } catch (MailException e) {
+            throw new MailSendException("Problem to send a mail");
+        }
+
     }
 
 }
