@@ -38,6 +38,8 @@ public class DataLoader implements CommandLineRunner {
             root.setEmail(email);
             root.setPassword(passwordEncoder.encode(password));
             root.setRole(Role.ROLE_ROOT);
+            root.setActivated(true);
+            root.setValidated(true);
 
             userRepository.save(root);
             log.info("Root account created with username {}", root.getUsername());
