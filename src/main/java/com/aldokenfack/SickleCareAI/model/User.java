@@ -3,6 +3,7 @@ package com.aldokenfack.SickleCareAI.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
+    @UuidGenerator
     private UUID publicId;
 
     private String username;
