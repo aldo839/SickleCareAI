@@ -28,14 +28,13 @@ public class AuthService {
 
     public UserLoginResponseDTO loginUser(UserLoginRequestDTO dto){
 
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found !"));
-
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Bad email or password. Please try again !");
         }
+
+        User user = userRepository.findByEmail(dto.getEmail()).get();
 
         String accessToken = jwtUtils.generateToken(user.getEmail());
         JwtRefreshToken refreshToken = jwtRefreshTokenService.generateRefreshToken(user.getId());
