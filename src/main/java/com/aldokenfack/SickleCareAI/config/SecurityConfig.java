@@ -31,10 +31,10 @@ public class SecurityConfig {
                         .csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(auth -> auth
 
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/patients/register-patient", "/api/doctors/register-doctor").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/patients/activate-patient", "/api/doctors/activate-doctor", "/activate-admin").permitAll()
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                         )
                         .addFilterBefore(new JwtFilter(jwtUtils, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                         .build();
