@@ -23,7 +23,7 @@ public class Validation {
 
     private String code;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
 
 }
