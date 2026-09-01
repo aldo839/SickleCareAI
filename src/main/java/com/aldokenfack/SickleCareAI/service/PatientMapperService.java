@@ -17,9 +17,14 @@ public class PatientMapperService {
             age = Period.between(patient.getBirthdate(), LocalDate.now()).getYears();
         }
 
+        Long doctorId = null;
+        if (patient.getDoctor() != null){
+            doctorId = patient.getDoctor().getId();
+        }
+
         return new PatientResponseDTO(
 
-                patient.getId(),
+                doctorId,
                 patient.getUsername(),
                 patient.getEmail(),
                 patient.getRole(),
@@ -30,8 +35,7 @@ public class PatientMapperService {
                 patient.getBloodtype(),
                 patient.getWeight(),
                 patient.getRegion(),
-                patient.getCity(),
-                patient.getDoctor().getId()
+                patient.getCity()
 
         );
 

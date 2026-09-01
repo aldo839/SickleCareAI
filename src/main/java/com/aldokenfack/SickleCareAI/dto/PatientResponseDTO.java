@@ -7,7 +7,7 @@ import com.aldokenfack.SickleCareAI.model.Sex;
 
 public record PatientResponseDTO(
 
-        Long id,
+        Long doctorId,
 
         String username,
 
@@ -29,9 +29,7 @@ public record PatientResponseDTO(
 
         String region,
 
-        String city,
-
-        Long doctorId
+        String city
 
 ){
 }
