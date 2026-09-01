@@ -1,5 +1,6 @@
 package com.aldokenfack.SickleCareAI.controller;
 
+import com.aldokenfack.SickleCareAI.annotation.RateLimit;
 import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.dto.ForgotPasswordRequestDTO;
 import com.aldokenfack.SickleCareAI.dto.ResetPasswordRequestDTO;
@@ -9,6 +10,7 @@ import com.aldokenfack.SickleCareAI.repository.JwtRefreshTokenRepository;
 import com.aldokenfack.SickleCareAI.service.AuthService;
 import com.aldokenfack.SickleCareAI.service.JwtRefreshTokenService;
 import com.aldokenfack.SickleCareAI.service.PasswordResetService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+@Tag(name = "Authentications", description = "Account activation and user authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -28,6 +32,17 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final PasswordResetService passwordResetService;
 
+
+    @PostMapping("/activate-account")
+    public ResponseEntity<String> activateAccount(@RequestBody Map<String, String> requestBody){
+
+        authService.activation(requestBody);
+
+        return ResponseEntity.ok("Account successfully activate.");
+    }
+
+
+    @RateLimit(attemps = 5, period = 1, unit = TimeUnit.MINUTES, keyType = "SUBNET+USER")
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDTO> loginUser(@Valid @RequestBody UserLoginRequestDTO dto){
 
