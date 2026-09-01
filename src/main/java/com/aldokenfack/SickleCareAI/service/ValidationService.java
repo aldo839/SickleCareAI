@@ -46,4 +46,9 @@ public class ValidationService {
         return validationRepository.findByCode(code).orElseThrow(() -> new UserNotFoundException("Error : code not found"));
     }
 
+    public void deleteValidation(Validation validation){
+
+        validationRepository.delete(validation);
+    }
+
 }
