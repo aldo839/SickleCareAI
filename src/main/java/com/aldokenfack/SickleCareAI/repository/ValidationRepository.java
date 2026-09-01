@@ -9,4 +9,5 @@ public interface ValidationRepository extends JpaRepository<Validation, Long> {
 
     Optional<Validation> findByCode(String code);
 
+    void delete(Validation validation);
 }
