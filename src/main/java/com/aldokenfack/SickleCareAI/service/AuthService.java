@@ -6,7 +6,9 @@ import com.aldokenfack.SickleCareAI.dto.UserLoginResponseDTO;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.JwtRefreshToken;
 import com.aldokenfack.SickleCareAI.model.User;
+import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.UserRepository;
+import com.aldokenfack.SickleCareAI.repository.ValidationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,27 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final JwtRefreshTokenService jwtRefreshTokenService;
+    private final ValidationService validationService;
+    private final ValidationRepository validationRepository;
+
+    public void activation(Map<String, String> activationMap){
+
+        Validation validation = validationService.readCode(activationMap.get("code"));
+
+        if (Instant.now().isAfter(validation.getExpiration())){
+            throw new RuntimeException("Your code has expired");
+        }
+
+        validation.setActivation(Instant.now());
+        validationRepository.save(validation);
+
+        User user = validation.getUser();
+        user.setActivated(true);
+        userRepository.save(user);
+
+        // Delete activation code after use.
+        validationService.deleteValidation(validation);
+    }
 
     public UserLoginResponseDTO loginUser(UserLoginRequestDTO dto){
 
