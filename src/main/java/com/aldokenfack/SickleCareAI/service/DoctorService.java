@@ -10,14 +10,13 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.*;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
+import com.aldokenfack.SickleCareAI.repository.ValidationRepository;
 import org.springframework.security.access.AccessDeniedException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.time.Instant;
 import java.util.*;
 
@@ -30,6 +29,7 @@ public class DoctorService {
     private final DoctorMapperService doctorMapperService;
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
+    private final ValidationRepository validationRepository;
     private final JwtUtils jwtUtils;
     private final PatientRepository patientRepository;
     private final PatientMapperService patientMapperService;
@@ -72,23 +72,6 @@ public class DoctorService {
 
         return doctorMapperService.mapToResponseDTO(savedDoctor);
 
-    }
-
-
-    public String activation(Map<String, String> activation){
-
-        Validation validation = validationService.readCode(activation.get("code"));
-
-        if (Instant.now().isAfter(validation.getExpiration())){
-            throw new RuntimeException("Your code is expire");
-        }
-
-        Doctor doctor = doctorRepository.findById(validation.getUser().getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        doctor.setActivated(true);
-        doctorRepository.save(doctor);
-
-        return jwtUtils.generateToken(doctor.getEmail());
     }
 
 

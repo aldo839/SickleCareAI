@@ -1,6 +1,5 @@
 package com.aldokenfack.SickleCareAI.service;
 
-import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.dto.AdminRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.AdminUpdateDTO;
@@ -8,18 +7,14 @@ import com.aldokenfack.SickleCareAI.exception.UserAlreadyExistException;
 import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Admin;
 import com.aldokenfack.SickleCareAI.model.Role;
-import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +25,6 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
     private final AuthService authService;
-    private final JwtUtils jwtUtils;
 
     public AdminResponseDTO registerAdmin(AdminRegistrationDTO dto){
 
@@ -97,24 +91,6 @@ public class AdminService {
         Admin updatedAdmin = adminRepository.save(admin);
 
         return adminMapperService.mapToResponseDTO(updatedAdmin);
-    }
-
-
-    public String activateAdmin(Map<String, String> activation){
-
-        Validation validation = validationService.readCode(activation.get("code"));
-
-        if (Instant.now().isAfter(validation.getExpiration())){
-            throw new RuntimeException("Your code is expire");
-        }
-
-        Admin admin = adminRepository.findById(validation.getUser().getId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        admin.setActivated(true);
-        adminRepository.save(admin);
-
-        return jwtUtils.generateToken(admin.getEmail());
     }
 
 

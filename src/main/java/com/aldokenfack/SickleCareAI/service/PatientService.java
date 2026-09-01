@@ -1,6 +1,5 @@
 package com.aldokenfack.SickleCareAI.service;
 
-import com.aldokenfack.SickleCareAI.config.JwtUtils;
 import com.aldokenfack.SickleCareAI.dto.PatientRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientUpdateDTO;
@@ -10,7 +9,6 @@ import com.aldokenfack.SickleCareAI.exception.UserNotFoundException;
 import com.aldokenfack.SickleCareAI.model.Doctor;
 import com.aldokenfack.SickleCareAI.model.Patient;
 import com.aldokenfack.SickleCareAI.model.Role;
-import com.aldokenfack.SickleCareAI.model.Validation;
 import com.aldokenfack.SickleCareAI.repository.DoctorRepository;
 import com.aldokenfack.SickleCareAI.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +17,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -33,7 +29,6 @@ public class PatientService {
     private final PatientMapperService patientMapperService;
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
-    private final JwtUtils jwtUtils;
     private final DoctorRepository doctorRepository;
     private final NotificationService notificationService;
     private final AuthService authService;
@@ -144,24 +139,6 @@ public class PatientService {
         patientRepository.delete(patient);
 
         log.warn("Patient {} delete by the user with id : {}", patient.getUsername(), currentUserId);
-    }
-
-
-    public String activation(Map<String, String> activation){
-
-        Validation validation = validationService.readCode(activation.get("code"));
-
-        if (Instant.now().isAfter(validation.getExpiration())){
-            throw new RuntimeException("Your code is expire");
-        }
-
-        Patient patient = patientRepository.findById(validation.getUser().getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        patient.setActivated(true);
-
-        patientRepository.save(patient);
-
-        return jwtUtils.generateToken(patient.getEmail());
     }
 
 
