@@ -4,6 +4,7 @@ import com.aldokenfack.SickleCareAI.dto.PatientRegistrationDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientResponseDTO;
 import com.aldokenfack.SickleCareAI.dto.PatientUpdateDTO;
 import com.aldokenfack.SickleCareAI.service.PatientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
+@Tag(name = "Patients", description = "Operations on patients accounts")
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
@@ -45,15 +46,6 @@ public class PatientController {
     public ResponseEntity<PatientResponseDTO> registerPatient(@Valid @RequestBody PatientRegistrationDTO dto) {
 
         return new ResponseEntity<>(patientService.registerPatient(dto), HttpStatus.CREATED);
-    }
-
-
-    @PostMapping("/activate-patient")
-    public ResponseEntity<String> activatePatient(@RequestBody Map<String, String> activation) {
-
-        String status = patientService.activation(activation);
-
-        return ResponseEntity.ok("Account successfully activated. \nStatus : " + status);
     }
 
 
