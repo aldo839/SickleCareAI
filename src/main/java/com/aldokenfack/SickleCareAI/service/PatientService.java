@@ -186,4 +186,12 @@ public class PatientService {
 
     }
 
+
+    public List<PatientResponseDTO> getPatientsByDoctor(UUID doctorId) {
+
+        return patientRepository.findByDoctorPublicId(doctorId).stream()
+                .map(patientMapperService::mapToResponseDTO)
+                .toList();
+    }
+
 }

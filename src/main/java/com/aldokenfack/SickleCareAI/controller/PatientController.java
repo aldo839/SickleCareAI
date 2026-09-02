@@ -77,4 +77,11 @@ public class PatientController {
         return new ResponseEntity<>(patientService.validatePatient(patientId), HttpStatus.OK);
     }
 
+    @GetMapping("/patients-by-doctor/{id}")
+    @PreAuthorize("hasRole('ADMIN', 'ROOT') or #id == authentication.principal.id")
+    public ResponseEntity<List<PatientResponseDTO>> getPatientByDoctor(@PathVariable UUID doctorId){
+
+        return new ResponseEntity<>(patientService.getPatientsByDoctor(doctorId), HttpStatus.OK);
+    }
+
 }
