@@ -12,7 +12,7 @@ import lombok.Setter;
 public class AdminRegistrationDTO {
 
     @NotBlank(message = "Username is require !")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Username must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Username must only contain letter")
     @Size(min = 4, max = 20, message = "Username must have between 4 and 20 characters !")
     private String username;
 
@@ -26,11 +26,11 @@ public class AdminRegistrationDTO {
     private String password;
 
     @Size(max = 20, message = "Firstname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String firstname;
 
     @Size(max = 20, message = "Lastname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String lastname;
 
 }

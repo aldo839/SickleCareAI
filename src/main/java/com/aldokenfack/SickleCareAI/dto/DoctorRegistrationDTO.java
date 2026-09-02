@@ -26,36 +26,36 @@ public class DoctorRegistrationDTO {
     private String password;
 
     @Size(max = 20, message = "Firstname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String firstname;
 
     @Size(max = 20, message = "Lastname must have less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d]$", message = "Firstname must only contain letter")
+    @Pattern(regexp = "^[a-zA-Z\\d]+$", message = "Firstname must only contain letter")
     private String lastname;
 
-    @Pattern(regexp = "^[a-zA-Z\\s]", message = "Speciality can only contain letters and space")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Speciality can only contain letters and space")
     private String speciality;
 
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]", message = "Matricule can only contain letters, numbers and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Matricule can only contain letters, numbers and space")
     private String matricule;
 
-    @Pattern(regexp = "^[a-zA-Z\\s]", message = "validation letter reference can only contain letters and space")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "validation letter reference can only contain letters and space")
     private String validationLetterReference;
 
     @Size(max = 20, message = "Region must be less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Region must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Region must only contain letter, number and space")
     private String region;
 
     @Size(max = 20, message = "City must be less than 20 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "City must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "City must only contain letter, number and space")
     private String city;
 
     @Size(max = 50, message = "Hospital must be less than 50 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Hospital must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Hospital must only contain letter, number and space")
     private String hospital;
 
     @Size(max = 50, message = "Hospital Unit must be less than 50 characters")
-    @Pattern(regexp = "^[a-zA-Z\\d\\s]$", message = "Hospital unit must only contain letter, number and space")
+    @Pattern(regexp = "^[a-zA-Z\\d\\s]+$", message = "Hospital unit must only contain letter, number and space")
     private String hospitalUnit;
 
 }
