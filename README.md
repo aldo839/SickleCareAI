@@ -1,9 +1,9 @@
 # SickleCareAI
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Java](https://img.shields.io/badge/Java-21-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%2Boot-4.0-brightgreen)
-![PostgreSQL](https://img.shields.io/badge/Postgresql)
+![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4479A1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Licence](https://img.shields.io/badge/licence-MIT-blue)
 
 > Application of heath tracking for sickle cell person in Cameroon.
